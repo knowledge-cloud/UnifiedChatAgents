@@ -1,7 +1,7 @@
 import aws_cdk as core
 import aws_cdk.assertions as assertions
 
-from unified_chat_agents.unified_chat_agents_stack import UnifiedChatAgentsStack
+from unified_chat_agents_stack.unified_chat_agents_stack import UnifiedChatAgentsStack
 
 # example tests. To run these tests, uncomment this file along with the example
 # resource in unified_chat_agents/unified_chat_agents_stack.py

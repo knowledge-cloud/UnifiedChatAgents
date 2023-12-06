@@ -1,0 +1,12 @@
+FROM public.ecr.aws/lambda/python:3.11-arm64
+LABEL maintainer="Unified Chat Agents"
+
+# Copy requirements.txt
+COPY requirements.txt ${LAMBDA_TASK_ROOT}
+
+# Copy function code
+COPY src/ ${LAMBDA_TASK_ROOT}
+
+RUN pip install -r requirements.txt
+
+CMD [ "unified_chat_agents.chat_handler" ]

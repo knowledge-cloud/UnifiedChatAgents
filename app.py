@@ -3,7 +3,7 @@ import os
 
 import aws_cdk as cdk
 
-from unified_chat_agents.unified_chat_agents_stack import UnifiedChatAgentsStack
+from unified_chat_agents_stack.unified_chat_agents_stack import UnifiedChatAgentsStack
 
 
 app = cdk.App()
