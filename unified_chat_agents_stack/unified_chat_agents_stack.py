@@ -25,7 +25,7 @@ class UnifiedChatAgentsStack(Stack):
 
         api = RestApi(
             self, "UnifiedChatAgentsAPIGateway", rest_api_name="UnifiedChatAgentsAPIGateway", default_integration=LambdaIntegration(unified_chat_agents_function))
-        api.root.add_method(
+        api.root.add_resource("chat").add_method(
             "POST",
             LambdaIntegration(unified_chat_agents_function)
         )

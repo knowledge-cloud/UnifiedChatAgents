@@ -5,8 +5,8 @@ LABEL maintainer="Unified Chat Agents"
 COPY requirements.txt ${LAMBDA_TASK_ROOT}
 
 # Copy function code
-COPY src/ ${LAMBDA_TASK_ROOT}
+COPY unified_chat_agents/ ${LAMBDA_TASK_ROOT}
 
 RUN pip install -r requirements.txt
 
-CMD [ "unified_chat_agents.chat_handler" ]
+CMD [ "chat_handler.handler" ]
