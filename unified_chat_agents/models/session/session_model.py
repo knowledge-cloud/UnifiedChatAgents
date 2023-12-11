@@ -1,4 +1,4 @@
-from models.base_model import BaseModel
+from models import BaseModel
 from pynamodb.attributes import UnicodeAttribute
 
 
@@ -8,4 +8,3 @@ class Session(BaseModel):
         region = 'ap-south-1'
     id = UnicodeAttribute(hash_key=True)
     client_id = UnicodeAttribute()
-
