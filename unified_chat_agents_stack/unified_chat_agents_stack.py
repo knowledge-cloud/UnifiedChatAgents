@@ -1,6 +1,7 @@
 from aws_cdk import (
     Stack,
     aws_lambda as _lambda,
+    aws_iam as iam,
 )
 from constructs import Construct
 from aws_cdk.aws_apigateway import (
@@ -29,3 +30,9 @@ class UnifiedChatAgentsStack(Stack):
             "POST",
             LambdaIntegration(unified_chat_agents_function)
         )
+
+        unified_chat_agents_function.add_to_role_policy(iam.PolicyStatement(
+            effect=iam.Effect.ALLOW,
+            actions=["dynamodb:*"],
+            resources=["*"]
+        ))

@@ -4,6 +4,7 @@ import os
 import aws_cdk as cdk
 
 from unified_chat_agents_stack.unified_chat_agents_stack import UnifiedChatAgentsStack
+from unified_chat_agents_stack.dynamo_db_stack import DynamodbStack
 
 
 app = cdk.App()
@@ -24,5 +25,7 @@ UnifiedChatAgentsStack(app, "UnifiedChatAgentsStack",
 
     # For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html
     )
+
+DynamodbStack(app, "DynamodbStack",)
 
 app.synth()
