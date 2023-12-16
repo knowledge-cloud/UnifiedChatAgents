@@ -1,20 +1,16 @@
 from aws_cdk import (Stack, aws_dynamodb as _dynamodb)
 from constructs import Construct
 
+
 class DynamodbStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
-        # The code that defines your stack goes here
         clients_table = _dynamodb.Table(
             self,
             "Clients",
             table_name="clients",
             partition_key=_dynamodb.Attribute(
-                name="organization_id",
-                type=_dynamodb.AttributeType.STRING
-            ),
-            sort_key=_dynamodb.Attribute(
                 name="id",
                 type=_dynamodb.AttributeType.STRING
             ),
@@ -26,7 +22,7 @@ class DynamodbStack(Stack):
             "Sessions",
             table_name="sessions",
             partition_key=_dynamodb.Attribute(
-                name="client_id",
+                name="id",
                 type=_dynamodb.AttributeType.STRING
             ),
             billing_mode=_dynamodb.BillingMode.PAY_PER_REQUEST
