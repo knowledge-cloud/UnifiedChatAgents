@@ -6,8 +6,11 @@ class UserMessagePrompt(BasePrompt):
 
     def __init__(self):
         """Initialize the UserMessagePrompt with a specific format."""
-        super().__init__("""
-                         {role}
-                         ====================
-                         {message}
-                         """)
+        super().__init__(
+            """
+Role:
+{role}
+====================
+Message:
+{message}
+""")
