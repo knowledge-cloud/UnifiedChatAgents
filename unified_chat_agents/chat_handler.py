@@ -1,25 +1,30 @@
+import os
 import awsgi
-from flask import (Flask, jsonify)
+from flask import (Flask)
 from lib.prompt import BasePrompt
 from utils.log_utils import (logger, LogUtils)
-from models.client.client_dao import clientDAOInstance
+from lib.prompt import Message
+from lib.agents import BaseAgent
+from lib.openai import OpenAIModel
 
+os.environ["OPENAI_API_KEY"] = "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"
 
 app = Flask(__name__)
 
 
 @app.route('/chat', methods=['POST'])
 def chat():
-    res = BasePrompt("""
-        Hi {name}, 
-        {message}
-        Thanks,
-        {sender}
+    prompt = BasePrompt("""
+    You are very intelligent.
     """)
-    print(res.input_variables)
-    response = res.get_prompt(
-        name="John", message="Hello World!", sender="Jane")
-    return response
+    agent = BaseAgent(prompt, OpenAIModel.GPT_3_5)
+    messages = [Message({"role": "user", "content": "Hello, how are you?"})]
+    try:
+        response = agent.chat_completions(messages, {"type": "text"})
+        print("response", response)
+        return response
+    except Exception as e:
+        print(e)
 
 
 def handler(event, context):
