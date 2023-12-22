@@ -1,17 +1,22 @@
 import os
 import awsgi
+from flask import (Flask, jsonify, request)
+from utils.log_utils import (logger, LogUtils)
+from models.vector_db.faiss.faiss_dao import FaissDAO
+from utils.log_utils import (logger, LogUtils)
+from aws_utils.secrets_manager import SecretsManager
+from aws_utils.s3_utils import S3Utils
 import json
 from flask import (Flask, jsonify, request)
-
-from utils.log_utils import (logger, LogUtils)
 from lib.chat import ChatRole, ChatRoom, ChatMessage
 from models.vector_db.weaviate.weaviate_dao import WeaviateDAO
-from aws_utils.secrets_manager import SecretsManager
 
 secrets = SecretsManager.get_secret("UCA")
 os.environ["OPENAI_API_KEY"] = secrets["OPENAI_KEY"]
 os.environ["WEAVIATE_KEY"] = secrets["WEAVIATE_KEY"]
 os.environ["WEAVIATE_URL"] = "https://unified-chat-agents-el9cpwl9.weaviate.network"
+os.environ["VECTOR_DB_BUCKET"] = "uca-vector-store"
+
 
 app = Flask(__name__)
 
@@ -35,28 +40,29 @@ def chat():
 def ingest_api_docs():
     logger.info(f"Request: {request}")
     data = json.loads(request.data)
-    weaviate_dao = WeaviateDAO()
-    saved_ids = weaviate_dao.insert_list(
-        doc_info_list=data.get('data'), schema=data.get('class'))
+    faiss_dao = FaissDAO.load_from_local(index_name=data.get("collection"))
+    saved_ids = faiss_dao.insert_list(doc_info_list=data.get('data'))
     return jsonify({'message': 'Success', 'ids': saved_ids})
 
 
-@app.route('/<class_name>/docs', methods=['GET'])
-def fetch_all_docs(class_name: str):
-    logger.info(f"Fetching all docs for class: {class_name}")
-    weaviate_dao = WeaviateDAO()
-    docs = weaviate_dao.fetch_all(schema=class_name)
+@app.route('/<collection>/docs', methods=['GET'])
+def fetch_all_docs(collection: str):
+    logger.info(f"Fetching all docs form : {collection}")
+    faiss_dao = FaissDAO.load_from_local(index_name=collection)
+    docs = faiss_dao.fetch_all()
     return jsonify({'message': 'Success', 'docs': docs})
 
 
-@app.route('/<class_name>', methods=['DELETE'])
-def delete_class(class_name: str):
-    logger.info(f"Deleting class: {class_name}")
-    weaviate_dao = WeaviateDAO()
-    weaviate_dao.delete_collection(schema=class_name)
+@app.route('/<collection>', methods=['DELETE'])
+def delete_class(collection: str):
+    logger.info(f"Deleting collectionq: {collection}")
+    faiss_dao = FaissDAO.load_from_local(index_name=collection)
+    faiss_dao.delete_collection(collection=collection)
     return jsonify({'message': 'Success'})
 
 
 def handler(event, context):
     logger.info(f"Event: {LogUtils.stringify(event)}")
+    S3Utils.download_to_directory(bucket_name=os.environ.get(
+        "VECTOR_DB_BUCKET"), directory="/tmp/faiss")
     return awsgi.response(app, event, context)
