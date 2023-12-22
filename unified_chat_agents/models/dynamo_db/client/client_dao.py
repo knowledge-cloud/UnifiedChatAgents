@@ -1,5 +1,5 @@
-from models import BaseDAO
-from models.client.client_model import Client
+from models.dynamo_db import BaseDAO
+from models.dynamo_db.client.client_model import Client
 
 
 class ClientDAO(BaseDAO[Client]):

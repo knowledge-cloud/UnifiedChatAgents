@@ -1,13 +1,19 @@
 import os
 import awsgi
-from flask import (Flask)
+from flask import (Flask, jsonify, request)
 from utils.log_utils import (logger, LogUtils)
 from lib.chat import ChatRole, ChatRoom
+from models.vector_db.weaviate.weaviate_dao import WeaviateDAO
+from utils.log_utils import (logger, LogUtils)
+from aws_utils.secrets_manager import SecretsManager
+import json
 
-os.environ["OPENAI_API_KEY"] = "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"
+secrets = SecretsManager.get_secret("UCA")
+os.environ["OPENAI_API_KEY"] = secrets["OPENAI_KEY"]
+os.environ["WEAVIATE_KEY"] = secrets["WEAVIATE_KEY"]
+os.environ["WEAVIATE_URL"] = "https://unified-chat-agents-el9cpwl9.weaviate.network"
 
 app = Flask(__name__)
-
 
 @app.route('/chat', methods=['POST'])
 def chat():
@@ -24,6 +30,29 @@ def chat():
         logger.error(f"Error: {e}")
 
 
+@app.route('/docs', methods=['POST'])
+def ingest_api_docs():
+    logger.info(f"Request: {request}")
+    data = json.loads(request.data)
+    weaviate_dao = WeaviateDAO()
+    saved_ids = weaviate_dao.insert_list(doc_info_list=data.get('data'), schema=data.get('class'))
+    return jsonify({'message': 'Success', 'ids': saved_ids})
+
+@app.route('/<class_name>/docs', methods=['GET'])
+def fetch_all_docs(class_name: str):
+    logger.info(f"Fetching all docs for class: {class_name}")
+    weaviate_dao = WeaviateDAO()
+    docs = weaviate_dao.fetch_all(schema=class_name)
+    return jsonify({'message': 'Success', 'docs': docs})
+
+@app.route('/<class_name>', methods=['DELETE'])
+def delete_class(class_name: str):
+    logger.info(f"Deleting class: {class_name}")
+    weaviate_dao = WeaviateDAO()
+    weaviate_dao.delete_collection(schema=class_name)
+    return jsonify({'message': 'Success'})
+
+
 def handler(event, context):
-    logger.info(f"Event: {LogUtils.stringify(data=event)}")
+    logger.info(f"Event: {LogUtils.stringify(event)}")
     return awsgi.response(app, event, context)

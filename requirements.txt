@@ -4,3 +4,4 @@ Flask==3.0.0
 aws-wsgi==0.2.7
 pynamodb==5.5.1
 openai==1.6.0
+weaviate-client==4.4b1

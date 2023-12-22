@@ -1,4 +1,4 @@
-from models import BaseModel
+from models.dynamo_db import BaseModel
 from pynamodb.attributes import UnicodeAttribute
 
 

@@ -1,5 +1,5 @@
 from pynamodb.attributes import UnicodeAttribute
-from models import BaseModel
+from models.dynamo_db import BaseModel
 
 
 class Client(BaseModel):
