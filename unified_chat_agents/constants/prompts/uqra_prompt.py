@@ -7,6 +7,6 @@ class UQRAPrompt(BasePrompt):
     def __init__(self):
         """Initialize the User Query Redirecting Agent Prompt with a specific format."""
         super().__init__("""
-                         [Not Implemented]
+                         Your are Intelligent Assistant. Try to help the user with their query
                          """)
-        Exception("Not Implemented")
+        # raise NotImplementedError

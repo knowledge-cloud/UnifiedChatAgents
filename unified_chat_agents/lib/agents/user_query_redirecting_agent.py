@@ -1,7 +1,8 @@
-from typing import List, Union
-from lib.prompt import Message, BasePrompt
-from lib.agents import BaseRedirectingAgent, RedirectingAgentRole
+from typing import List
+from lib.prompt import BasePrompt
+from lib.agents import BaseRedirectingAgent
 from constants.prompts import UQRAPrompt
+from lib.chat import ChatRole, ChatMessage
 
 
 class UserQueryRedirectingAgent(BaseRedirectingAgent):
@@ -10,7 +11,7 @@ class UserQueryRedirectingAgent(BaseRedirectingAgent):
     The agent can respond or redirect to another agent.
     """
 
-    role: RedirectingAgentRole = RedirectingAgentRole.UQRA
+    role: ChatRole = ChatRole.UQRA
 
     prompt: BasePrompt = UQRAPrompt()
 
@@ -18,13 +19,15 @@ class UserQueryRedirectingAgent(BaseRedirectingAgent):
         """Initialize the UserQueryRedirectingAgent with a prompt and a model."""
         super().__init__(prompt=self.prompt)
 
-    def get_redirecting_agent(
+    def predict(
         self,
-        messages: List[Message]
-    ) -> Union[RedirectingAgentRole, None]:
+        messages: List[ChatMessage]
+    ) -> ChatMessage:
         """Get the redirecting agent."""
-        response = self.chat_completions(messages, {"type": "json"})
+        print(f"Messages: {messages}")
+        response = self.chat_completions(messages, {"type": "text"})
 
         # Implement Custom Logic here
 
-        return RedirectingAgentRole.RAGA  # change this
+        # change this
+        return {"from_": self.role, "to": ChatRole.USER, "content": response}
