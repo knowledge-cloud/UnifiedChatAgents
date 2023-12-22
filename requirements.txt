@@ -5,3 +5,4 @@ aws-wsgi==0.2.7
 pynamodb==5.5.1
 openai==1.6.0
 weaviate-client==4.4b1
+pydantic==2.5.2
