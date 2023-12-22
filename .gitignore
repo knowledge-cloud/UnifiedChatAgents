@@ -6,6 +6,7 @@ __pycache__
 *.egg-info
 .vscode
 unified_chat_agents/scripts/*
+.env
 
 # CDK asset staging directory
 .cdk.staging

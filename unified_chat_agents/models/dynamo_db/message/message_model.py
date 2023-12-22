@@ -1,5 +1,5 @@
 from enum import Enum
-from models import BaseModel
+from models.dynamo_db import BaseModel
 from pynamodb.attributes import UnicodeAttribute, UTCDateTimeAttribute 
 
 class Role(Enum):

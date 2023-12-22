@@ -1,6 +1,6 @@
 {
-  "resource": "/chat",
-  "path": "/chat",
+  "resource": "/docs",
+  "path": "/docs",
   "httpMethod": "POST",
   "headers": {
     "Accept": "*/*",
@@ -78,6 +78,6 @@
     "domainName": "t2uolximjh.execute-api.ap-south-1.amazonaws.com",
     "apiId": "t2uolximjh"
   },
-  "body": null,
+  "body": "{\n    \"class\": \"ApiDocs\",\n    \"data\": [\n      {\n        \"text\": \"hello!\"\n      },\n      {\n        \"text\": \"how you doing!\"\n      }\n    ]\n  }",
   "isBase64Encoded": false
 }
