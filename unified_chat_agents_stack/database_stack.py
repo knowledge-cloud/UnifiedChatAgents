@@ -1,8 +1,8 @@
-from aws_cdk import (Stack, aws_dynamodb as _dynamodb)
+from aws_cdk import (Stack, aws_dynamodb as _dynamodb, aws_s3 as _s3)
 from constructs import Construct
 
 
-class DynamodbStack(Stack):
+class DatabaseStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
@@ -41,4 +41,10 @@ class DynamodbStack(Stack):
                 type=_dynamodb.AttributeType.STRING
             ),
             billing_mode=_dynamodb.BillingMode.PAY_PER_REQUEST
+        )
+
+        chroma_db_bucket = _s3.Bucket(
+            self,
+            "VectorDB",
+            bucket_name="uca-vector-store"
         )

@@ -24,15 +24,13 @@ class UnifiedChatAgentsStack(Stack):
             code=_lambda.DockerImageCode.from_image_asset(directory=""),
             architecture=_lambda.Architecture.ARM_64,
             timeout=Duration.seconds(30),
-            environment={
-                "WEAVIATE_URL": "https://unified-chat-agents-el9cpwl9.weaviate.network"
-            }
+            memory_size=1024
         )
 
         api = RestApi(
-            self, 
-            "UnifiedChatAgentsAPIGateway", 
-            rest_api_name="UnifiedChatAgentsAPIGateway", 
+            self,
+            "UnifiedChatAgentsAPIGateway",
+            rest_api_name="UnifiedChatAgentsAPIGateway",
             default_integration=LambdaIntegration(unified_chat_agents_function)
         )
         api.root.add_resource("chat").add_method(
@@ -44,12 +42,12 @@ class UnifiedChatAgentsStack(Stack):
             LambdaIntegration(unified_chat_agents_function)
         )
 
-        class_name_resource = api.root.add_resource("{class_name}")
-        class_name_resource.add_resource("docs").add_method(
+        collection_resource = api.root.add_resource("{collection}")
+        collection_resource.add_resource("docs").add_method(
             "GET",
             LambdaIntegration(unified_chat_agents_function)
         )
-        class_name_resource.add_method(
+        collection_resource.add_method(
             "DELETE",
             LambdaIntegration(unified_chat_agents_function)
         )
@@ -63,5 +61,11 @@ class UnifiedChatAgentsStack(Stack):
         unified_chat_agents_function.add_to_role_policy(iam.PolicyStatement(
             effect=iam.Effect.ALLOW,
             actions=["secretsmanager:GetSecretValue"],
+            resources=["*"]
+        ))
+
+        unified_chat_agents_function.add_to_role_policy(iam.PolicyStatement(
+            effect=iam.Effect.ALLOW,
+            actions=["s3:*"],
             resources=["*"]
         ))
