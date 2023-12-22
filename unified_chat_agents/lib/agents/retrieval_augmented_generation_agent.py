@@ -1,7 +1,8 @@
-from typing import List, Union
-from lib.prompt import Message, BasePrompt
-from lib.agents import BaseRedirectingAgent, RedirectingAgentRole
+from typing import List
+from lib.prompt import BasePrompt
+from lib.agents import BaseRedirectingAgent
 from constants.prompts import RAGAPrompt
+from lib.chat import ChatRole, ChatMessage
 
 
 class RetrievalAugmentedGenerationAgent(BaseRedirectingAgent):
@@ -9,7 +10,7 @@ class RetrievalAugmentedGenerationAgent(BaseRedirectingAgent):
     The agent can respond or redirect to another agent.
     """
 
-    role: RedirectingAgentRole = RedirectingAgentRole.RAGA
+    role: ChatRole = ChatRole.RAGA
 
     prompt: BasePrompt = RAGAPrompt()
 
@@ -17,13 +18,13 @@ class RetrievalAugmentedGenerationAgent(BaseRedirectingAgent):
         """Initialize the RetrievalAugmentedGenerationAgent with a prompt and a model."""
         super().__init__(prompt=self.prompt)
 
-    def get_redirecting_agent(
+    def predict(
         self,
-        messages: List[Message]
-    ) -> Union[RedirectingAgentRole, None]:
+        messages: List[ChatMessage]
+    ) -> ChatMessage:
         """Get the redirecting agent."""
         response = self.chat_completions(messages, {"type": "json"})
 
         # Implement Custom Logic here
 
-        return RedirectingAgentRole.ReqSA  # change this
+        return ChatRole.ReqSA  # change this

@@ -12,5 +12,5 @@ Role:
 {role}
 ====================
 Message:
-{message}
+{content}
 """)

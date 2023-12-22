@@ -9,4 +9,4 @@ class ResSAPrompt(BasePrompt):
         super().__init__("""
                          [Not Implemented]
                          """)
-        Exception("Not Implemented")
+        # raise NotImplementedError
