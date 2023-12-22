@@ -1,5 +1,7 @@
-from typing import Dict, Optional, TypedDict
+from typing import Optional
 from enum import Enum
+
+from pydantic import BaseModel
 
 
 class ChatRole(Enum):
@@ -33,7 +35,7 @@ class ChatRole(Enum):
     """
 
 
-class ChatMessage(TypedDict):
+class ChatMessage(BaseModel):
     from_: ChatRole
     """
     Who sent the message.
@@ -44,12 +46,12 @@ class ChatMessage(TypedDict):
     To whom the message is sent.
     """
 
-    content: Dict[str, str]
+    content: str
     """
     The actual message.
     """
 
-    prompt: Optional[str]
+    prompt: Optional[str] = None
     """
     The prompt used by the agent to generate the message.
     """

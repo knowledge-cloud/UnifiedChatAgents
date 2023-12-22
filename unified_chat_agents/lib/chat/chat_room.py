@@ -23,7 +23,7 @@ class ChatRoom:
         """Add a message to the ChatRoom."""
         self.messages.append(message)
 
-    def _get_last_message(self) -> ChatMessage:
+    def get_last_message(self) -> ChatMessage:
         """Get the last message in the ChatRoom."""
         return self.messages[-1]
 
@@ -32,16 +32,16 @@ class ChatRoom:
 
         while True:
             print("Chat Session Started")
-            last_message = self._get_last_message()
+            last_message = self.get_last_message()
             print(f"Last Message: {last_message}")
             messages = ChatPromptTemplate(
-                self.messages).get_format_messages(last_message["to"])
-            print(f"======= Calling {last_message['to'].value} Agent  =======")
-            response = self.AGENTS[last_message["to"]].predict(messages)
-            print(f"Response from {last_message['to']} Agent: {response}")
+                self.messages).get_format_messages(last_message.to)
+            print(f"======= Calling {last_message.to} Agent  =======")
+            response = self.AGENTS[last_message.to].predict(messages)
+            print(f"Response from {last_message.to} Agent: {response}")
             self.add_message(response)
             print("=====================================")
-            if response["to"] == ChatRole.USER:
+            if response.to == ChatRole.USER:
                 break
 
         print("Chat Session Ended")

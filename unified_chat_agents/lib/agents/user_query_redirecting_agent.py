@@ -30,4 +30,4 @@ class UserQueryRedirectingAgent(BaseRedirectingAgent):
         # Implement Custom Logic here
 
         # change this
-        return {"from_": self.role, "to": ChatRole.USER, "content": response}
+        return ChatMessage(**{"from_": self.role, "to": ChatRole.USER, "content": response})
