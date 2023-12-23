@@ -1,4 +1,4 @@
-from lib.agents.base import BaseAgent
+from lib.agents.base import BaseAgent, BaseAgentException
 from lib.agents.base_redirecting_agent import BaseRedirectingAgent
 from lib.agents.user_query_redirecting_agent import UserQueryRedirectingAgent
 from lib.agents.retrieval_augmented_generation_agent import RetrievalAugmentedGenerationAgent

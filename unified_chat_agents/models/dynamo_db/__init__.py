@@ -16,7 +16,6 @@ class BaseDAO(Generic[T]):
     model: T
 
     def get(self, hash_key, range_key=None) -> T:
-        print()
         return self.model.get(hash_key, range_key)
 
     def save(self, model: T, conditional_operator=None, **expected_values) -> T:

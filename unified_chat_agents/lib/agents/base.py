@@ -7,6 +7,12 @@ from openai.types.chat.completion_create_params import ResponseFormat
 from lib.prompt import BasePrompt
 from lib.openai import OpenAIModel
 from lib.chat import ChatMessage
+# from utils.log_utils import logger
+
+
+class BaseAgentException(Exception):
+    """A base exception for the BaseAgent class."""
+    pass
 
 
 class BaseAgent(ABC):
@@ -43,15 +49,20 @@ class BaseAgent(ABC):
 
         system_prompt = self.prompt.get_prompt(**kwargs)
         system_message: ChatMessage = {
-            "role": "system", "content": system_prompt}
+            "role": "system", "content": system_prompt
+        }
         messages = [system_message] + messages
 
-        print(messages)
+        # for message in messages:
+        #     logger.debug(f"{message['role']}:")
+        #     logger.debug(f"----------------")
+        #     logger.debug(f"{message['content']}")
 
         response = self.client.chat.completions.create(
             model=self.model.value,
             response_format=response_format,
-            messages=[system_message] + messages
+            messages=[system_message] + messages,
+            seed=kwargs.get("seed"),
         )
 
         return response.choices[0].message.content
