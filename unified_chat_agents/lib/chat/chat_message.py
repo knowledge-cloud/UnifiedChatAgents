@@ -5,31 +5,35 @@ from pydantic import BaseModel
 
 
 class ChatRole(Enum):
-    USER = "USER"
+    USER = "Customer"
     """
     The user role.
     """
 
-    UQRA = "USER_QUERY_REDIRECTING_AGENT"
+    UQRA = "UQRA"
     """
+    USER_QUERY_REDIRECTING_AGENT
     All the user messages will be redirected to UQRA.
     The agent can respond or redirect to another agent.
     """
 
-    RAGA = "RETRIEVAL_AUGMENTED_GENERATION_AGENT"
+    RAGA = "RAGA"
     """
+    RETRIEVAL_AUGMENTED_GENERATION_AGENT
     Will query relevant documents from the knowledge base and augment the user query.
     The agent can respond directly to user or send the queried data to any specified agent.
     """
 
-    ReqSA = "REQUEST_SYNTHESIZER_AGENT"
+    ReqSA = "ReqSA"
     """
+    REQUEST_SYNTHESIZER_AGENT
     Will synthesize the required API request from user messages.
     The agent can respond directly to user or send the synthesized request to any specified agent.
     """
 
-    ResSA = "RESPONSE_SYNTHESIZER_AGENT"
+    ResSA = "ResSA"
     """
+    RESPONSE_SYNTHESIZER_AGENT
     Will synthesize the natural language response from the API response.
     The agent will respond directly to user.
     """
@@ -46,7 +50,7 @@ class ChatMessage(BaseModel):
     To whom the message is sent.
     """
 
-    content: str
+    content: str = ""
     """
     The actual message.
     """

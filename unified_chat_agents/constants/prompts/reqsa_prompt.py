@@ -7,6 +7,6 @@ class ReqSAPrompt(BasePrompt):
     def __init__(self):
         """Initialize the Request Synthesizer Agent Prompt with a specific format."""
         super().__init__("""
-                         [Not Implemented]
+                         [Not Implemented json]
                          """)
         # raise NotImplementedError

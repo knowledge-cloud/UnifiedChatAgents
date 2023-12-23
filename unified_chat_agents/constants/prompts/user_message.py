@@ -8,9 +8,7 @@ class UserMessagePrompt(BasePrompt):
         """Initialize the UserMessagePrompt with a specific format."""
         super().__init__(
             """
-Role:
-{role}
+{role}:
 ====================
-Message:
 {content}
 """)

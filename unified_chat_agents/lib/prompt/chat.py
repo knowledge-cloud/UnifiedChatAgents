@@ -22,7 +22,7 @@ class ChatPromptTemplate(ABC):
         for message in self.messages:
             formatted_role = "assistant" if message.from_ == role else "user"
             formatted_message = prompt.get_prompt(
-                role=formatted_role, content=message.content)
+                role=message.from_.value, content=message.content)
 
             formatted_messages.append(
                 {"role": formatted_role, "content": formatted_message})

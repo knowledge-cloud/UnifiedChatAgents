@@ -23,8 +23,8 @@ class RequestSynthesizerAgent(BaseRedirectingAgent):
         messages: List[ChatMessage]
     ) -> ChatMessage:
         """Get the redirecting agent."""
-        response = self.chat_completions(messages, {"type": "json"})
+        response = self.chat_completions(messages, {"type": "json_object"})
 
         # Implement Custom Logic here
 
-        return ChatRole.ResSA  # change this
+        return ChatMessage(**{"from_": self.role, "to": ChatRole.USER, "content": response})

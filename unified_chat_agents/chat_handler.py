@@ -1,15 +1,14 @@
 import os
+import json
 import awsgi
+from datetime import datetime
 from flask import (Flask, jsonify, request)
-from utils.log_utils import (logger, LogUtils)
+
+from lib.chat import ChatRole, ChatRoom, ChatMessage
 from models.vector_db.faiss.faiss_dao import FaissDAO
 from utils.log_utils import (logger, LogUtils)
 from aws_utils.secrets_manager import SecretsManager
 from aws_utils.s3_utils import S3Utils
-import json
-from flask import (Flask, jsonify, request)
-from lib.chat import ChatRole, ChatRoom, ChatMessage
-from models.vector_db.weaviate.weaviate_dao import WeaviateDAO
 
 secrets = SecretsManager.get_secret("UCA")
 os.environ["OPENAI_API_KEY"] = secrets["OPENAI_KEY"]
@@ -24,16 +23,42 @@ app = Flask(__name__)
 @app.route('/chat', methods=['POST'])
 def chat():
     user_message = "Hello"
-    chat_messages = [ChatMessage(**{"from_": ChatRole.USER,
-                                    "to": ChatRole.UQRA, "content": user_message})]
+    chat_messages = [
+        ChatMessage(**{
+            "from_": ChatRole.USER,
+            "to": ChatRole.UQRA,
+            "content": user_message
+        }),
+        ChatMessage(**{
+            "from_": ChatRole.UQRA,
+            "to": ChatRole.USER,
+            "content": "Hello! How can I assist you today?"
+        }),
+        ChatMessage(**{
+            "from_": ChatRole.USER,
+            "to": ChatRole.UQRA,
+            "content": "What is the weather like today?"
+        }),
+        ChatMessage(**{
+            "from_": ChatRole.ReqSA,
+            "to": ChatRole.USER,
+            "content": "Can you please provide the city name?"
+        }),
+        ChatMessage(**{
+            "from_": ChatRole.USER,
+            "to": ChatRole.UQRA,
+            "content": "New York"
+        }),
+    ]
     chat_room = ChatRoom("test_session_id_1", chat_messages)
     try:
+        start_time = datetime.now()
         chat_room.chat()
-        res = chat_room.get_last_message()
-        logger.info(f"Response: {res}")
-        return res.model_dump_json()
+        logger.info(f"Time taken: {datetime.now() - start_time}")
+        logger.info(f"Response: {chat_room.last_message}")
+        return chat_room.last_message.model_dump_json()
     except Exception as e:
-        logger.error(f"Error: {e}")
+        logger.error(f"Error: {e.message}")
 
 
 @app.route('/docs', methods=['POST'])
