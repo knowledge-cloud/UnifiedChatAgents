@@ -20,11 +20,16 @@ class ResponseSynthesizerAgent(BaseRedirectingAgent):
 
     def predict(
         self,
-        messages: List[ChatMessage]
+        messages: List[ChatMessage],
+        **kwargs
     ) -> ChatMessage:
         """Get the redirecting agent. If None, then the agent can only respond."""
-        response = self.chat_completions(messages, {"type": "json"})
+        response = self.chat_completions(messages, {"type": "text"})
 
-        # Implement Custom Logic here
-
-        return ChatRole.USER  # change this
+        return ChatMessage(
+            **{
+                "from_": self.role,
+                "to": ChatRole.USER,
+                "content": response,
+            }
+        )

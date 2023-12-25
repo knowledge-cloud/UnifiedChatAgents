@@ -20,7 +20,7 @@ class BaseRedirectingAgent(BaseAgent):
         super().__init__(prompt=prompt, model=model)
 
     @abstractmethod
-    def predict(self, messages: List[ChatMessage]) -> ChatMessage:
+    def predict(self, messages: List[ChatMessage], **kwargs) -> ChatMessage:
         """
         Redirect or respond to the messages.
         """

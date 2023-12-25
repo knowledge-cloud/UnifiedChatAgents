@@ -1,15 +1,15 @@
 from abc import ABC
 from string import Formatter
-from typing import List
+from typing import List, LiteralString
 
 formatter = Formatter()
 
 
 class BasePrompt(ABC):
-    _template: str
+    _template: LiteralString
     _input_variables: List[str]
 
-    def __init__(self, template: str):
+    def __init__(self, template: LiteralString):
         """Initialize the Prompt with a template string."""
         self.template = template
 
