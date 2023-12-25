@@ -6,9 +6,9 @@ from openai import OpenAI
 from openai.types.chat.completion_create_params import ResponseFormat
 
 from lib.prompt import BasePrompt
-from lib.openai import OpenAIModel
-from lib.chat import ChatMessage
 from utils.log_utils import logger
+from lib.openai import OpenAIModel, OpenAIChatMessage, OpenaiChatRole
+# from utils.log_utils import logger
 
 
 class BaseAgentException(Exception):
@@ -40,7 +40,7 @@ class BaseAgent(ABC):
 
     def chat_completions(
         self,
-        messages: List[ChatMessage],
+        messages: List[OpenAIChatMessage],
         response_format: ResponseFormat = {"type": "text"},
         **kwargs
     ) -> str:
@@ -50,19 +50,26 @@ class BaseAgent(ABC):
         """
 
         system_prompt = self.prompt.get_prompt(**kwargs)
-        system_message: ChatMessage = {
-            "role": "system", "content": system_prompt
-        }
+        system_message: OpenAIChatMessage = OpenAIChatMessage(**{
+            "role": OpenaiChatRole.SYSTEM.value, "content": system_prompt
+        })
         messages = [system_message] + messages
+
+        for message in messages:
+            logger.debug(f"********************{message.role}*****************")
+            logger.debug(
+                f"BaseAgent::chat_completions::messages: {message.content}")
+            logger.debug(f"Length: {len(message.content)}")
 
         response = self.client.chat.completions.create(
             model=self.model.value,
             response_format=response_format,
-            messages=[system_message] + messages,
+            messages=messages,
             seed=kwargs.get("seed"),
         )
 
         logger.info(f"OpenAI::Usage:: {response.usage.model_dump_json()}")
+        logger.debug(f"OpenAI::Choices:: {response.choices[0].message.content}")
 
         return response.choices[0].message.content
 

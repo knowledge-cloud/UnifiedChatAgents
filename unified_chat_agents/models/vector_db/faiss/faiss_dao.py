@@ -9,6 +9,7 @@ from utils.log_utils import logger
 import numpy as np
 import pickle
 import faiss
+import shutil
 
 
 class FaissDAO(VectorStorageBaseDAO):
@@ -86,6 +87,7 @@ class FaissDAO(VectorStorageBaseDAO):
         """Add a single document to the index and docstore."""
         if id is None:
             id = str(uuid.uuid4())
+        doc_info["id"] = id
         
         # add vector to index
         self._index.add(np.array([vector], dtype=np.float32))
@@ -109,6 +111,8 @@ class FaissDAO(VectorStorageBaseDAO):
         
         if ids is None:
             ids = [str(uuid.uuid4()) for _ in range(len(doc_info_list))]
+        for doc_info, id_ in zip(doc_info_list, ids):
+            doc_info["id"] = id_
         
         # add vectors to index
         self._index.add(np.array(vectors, dtype=np.float32))
@@ -131,9 +135,7 @@ class FaissDAO(VectorStorageBaseDAO):
 
         vector_array = np.array([vector], dtype=np.float32)
         _, indices = self._index.search(vector_array, top_k)
-        logger.info(f"indices: {indices}")
-
-        logger.info(f"docstore: {self._docstore}")
+        
         results = []
         for j, i in enumerate(indices[0]):
             if i < 0:
@@ -171,10 +173,13 @@ class FaissDAO(VectorStorageBaseDAO):
 
     def fetch_all(self) -> List[Dict[str, Any]]:
         results = []
-        logger.info(f"docstore: {self._docstore}")
         for _, value in self._docstore.items():
             results.append(value)
         return results
+    
+    def fetch_by_id(self, id: str) -> Dict[str, Any]:
+        return self._docstore[id]
+
 
     def query(
         self, 
@@ -199,8 +204,10 @@ class FaissDAO(VectorStorageBaseDAO):
     
     
     def delete_collection(self) -> None:
+        # TODO: Only delete the files for the index_name, not all files in the bucket
+        S3Utils.empty_bucket(bucket_name=self._vector_db_bucket)
         if os.path.exists(self._db_dir_path):
-            os.remove(self._db_dir_path)
+            shutil.rmtree(self._db_dir_path, ignore_errors=True)
         else:
             logger.warn(f"The file does not exist: {self._db_dir_path}")
 
@@ -208,8 +215,8 @@ class FaissDAO(VectorStorageBaseDAO):
     @classmethod
     def load_from_local(
         cls, 
+        index_name: str,
         db_dir_path: str = "/tmp/faiss", 
-        index_name: str = None
         ):
         if not index_name or index_name == "":
             raise ValueError("index_name must be specified")

@@ -4,6 +4,7 @@ from lib.prompt import BasePrompt
 from lib.agents import BaseRedirectingAgent, BaseAgentException
 from constants.prompts import UQRAPrompt
 from lib.chat import ChatRole, ChatMessage
+from lib.openai import OpenAIChatMessage
 from utils.log_utils import logger
 
 
@@ -23,7 +24,7 @@ class UserQueryRedirectingAgent(BaseRedirectingAgent):
 
     def predict(
         self,
-        messages: List[ChatMessage],
+        messages: List[OpenAIChatMessage],
         **kwargs
     ) -> ChatMessage:
         """Get the redirecting agent."""
@@ -31,8 +32,17 @@ class UserQueryRedirectingAgent(BaseRedirectingAgent):
             messages, {"type": "json_object"}, seed=1139909034989)
         formatted_response = json.loads(response)
         if formatted_response.get("user_response"):
-            return ChatMessage(**{"from_": self.role, "to": ChatRole.USER, "content": formatted_response.get("user_response")})
+            return ChatMessage(**{
+                "from_": self.role, 
+                "to": ChatRole.USER, 
+                "content": formatted_response.get("user_response"),
+                "kwargs": kwargs
+            })
         elif formatted_response.get("redirect_to"):
-            return ChatMessage(**{"from_": ChatRole.USER, "to": ChatRole(formatted_response.get("redirect_to"))})
+            return ChatMessage(**{
+                "from_": ChatRole.USER, 
+                "to": ChatRole(formatted_response.get("redirect_to")), 
+                "kwargs": kwargs
+            })
         else:
             BaseAgentException("Invalid response from the agent.")

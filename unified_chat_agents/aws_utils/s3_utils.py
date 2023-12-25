@@ -32,3 +32,11 @@ class S3Utils:
                 s3.upload_file(local_path, bucket_name, s3_path)
                 logger.info(f"S3Utils:: uploaded file:{local_path} to s3_path:{s3_path}")
         return
+    
+    @staticmethod
+    def empty_bucket(bucket_name: str) -> None:
+        logger.info(f"S3Utils:: emptying bucket:{bucket_name}")
+        s3 = boto3.resource('s3')
+        bucket = s3.Bucket(bucket_name)
+        bucket.objects.all().delete()
+        return

@@ -9,7 +9,8 @@ class ApiToolbox:
     def execute_request(self, request_info):
         method = request_info.get('method').upper()
         endpoint = request_info.get('url')
-        url = endpoint
+        query_params = request_info.get('query_params')
+        url = f"{endpoint}?{query_params}" if query_params else endpoint
         data = request_info.get('data', {})
         headers = request_info.get('headers', {})
 

@@ -5,6 +5,7 @@ from lib.prompt import BasePrompt
 from lib.agents import BaseRedirectingAgent
 from lib.chat import ChatRole, ChatMessage
 from lib.toolbox import ApiToolbox
+from lib.openai import OpenAIChatMessage
 from constants.prompts import ReqSAPrompt
 from utils.log_utils import logger
 from constants.errors.chat import API_TOOLBOX_ERROR
@@ -19,7 +20,7 @@ class RequestSynthesizerAgent(BaseRedirectingAgent):
 
     prompt: BasePrompt = ReqSAPrompt()
 
-    api_toolbox = ApiToolbox("http://localhost:3000")
+    api_toolbox = ApiToolbox("https://aibnzrilz2.execute-api.ap-south-1.amazonaws.com/prod/")
 
     def __init__(self) -> None:
         """Initialize the RequestSynthesizerAgent with a prompt and a model."""
@@ -27,7 +28,7 @@ class RequestSynthesizerAgent(BaseRedirectingAgent):
 
     def predict(
         self,
-        messages: List[ChatMessage],
+        messages: List[OpenAIChatMessage],
         **kwargs
     ) -> ChatMessage:
         """Get the redirecting agent."""
@@ -77,6 +78,7 @@ class RequestSynthesizerAgent(BaseRedirectingAgent):
                             "from_": self.role,
                             "to": ChatRole.ResSA,
                             "content": response,
+                            "kwargs": kwargs
                         }
                     )
             else:
@@ -90,6 +92,7 @@ class RequestSynthesizerAgent(BaseRedirectingAgent):
                     **{
                         "from_": self.role,
                         "to": ChatRole.USER,
-                        "content": user_response
+                        "content": user_response,
+                        "kwargs": kwargs
                     }
                 )

@@ -1,0 +1,136 @@
+{
+  "chat_messages": [
+    {
+      "content": "Hi",
+      "from_": "Customer",
+      "kwargs": {},
+      "prompt": "None",
+      "to": "UQRA"
+    },
+    {
+      "content": "Hello! How can I assist you today?",
+      "from_": "UQRA",
+      "kwargs": {},
+      "prompt": "None",
+      "to": "Customer"
+    },
+    {
+      "content": "I want to know customer wallet balance",
+      "from_": "Customer",
+      "kwargs": {},
+      "prompt": "None",
+      "to": "UQRA"
+    },
+    {
+      "content": "Sure! To proceed, please provide the customer ID and the ID of the organization the user belongs to.",
+      "from_": "ReqSA",
+      "kwargs": {
+        "api_docs": {
+          "headers": {
+            "Authorization": { "description": "Basic Auth", "type": "string" }
+          },
+          "id": "6f569633-a94d-4c01-b544-1faf53d23b15",
+          "method": "GET",
+          "path_params": {
+            "customer_id": {
+              "description": "ID of the customer",
+              "type": "string"
+            }
+          },
+          "query_params": {
+            "organisation_id": {
+              "description": "ID of the organisation user belongs",
+              "type": "string"
+            }
+          },
+          "text": "This API is used to fetch wallet balance",
+          "url": "https://api.razorpay.com/v1/customer/{customer_id}/balance"
+        }
+      },
+      "prompt": "None",
+      "to": "Customer"
+    },
+    {
+      "content": "Customer Id 1234 and org ID 6789",
+      "from_": "Customer",
+      "kwargs": {
+        "api_docs": {
+          "headers": {
+            "Authorization": { "description": "Basic Auth", "type": "string" }
+          },
+          "id": "6f569633-a94d-4c01-b544-1faf53d23b15",
+          "method": "GET",
+          "path_params": {
+            "customer_id": {
+              "description": "ID of the customer",
+              "type": "string"
+            }
+          },
+          "query_params": {
+            "organisation_id": {
+              "description": "ID of the organisation user belongs",
+              "type": "string"
+            }
+          },
+          "text": "This API is used to fetch wallet balance",
+          "url": "https://api.razorpay.com/v1/customer/{customer_id}/balance"
+        }
+      },
+      "prompt": "None",
+      "to": "ReqSA"
+    },
+    {
+      "content": {
+        "error": {
+          "code": "BAD_REQUEST_ERROR",
+          "description": "The requested URL was not found on the server.",
+          "source": "NA",
+          "step": "NA",
+          "reason": "NA",
+          "metadata": {}
+        }
+      },
+      "from_": "ReqSA",
+      "kwargs": {
+        "api_docs": {
+          "headers": {
+            "Authorization": { "description": "Basic Auth", "type": "string" }
+          },
+          "id": "6f569633-a94d-4c01-b544-1faf53d23b15",
+          "method": "GET",
+          "path_params": {
+            "customer_id": {
+              "description": "ID of the customer",
+              "type": "string"
+            }
+          },
+          "query_params": {
+            "organisation_id": {
+              "description": "ID of the organisation user belongs",
+              "type": "string"
+            }
+          },
+          "text": "This API is used to fetch wallet balance",
+          "url": "https://api.razorpay.com/v1/customer/{customer_id}/balance"
+        }
+      },
+      "prompt": "None",
+      "to": "ResSA"
+    },
+    {
+      "content": "It seems there was an error with the request. Let me try that again for you. Please wait a moment.",
+      "from_": "ResSA",
+      "kwargs": "None",
+      "prompt": "None",
+      "to": "Customer"
+    }
+  ],
+  "last_message": {
+    "content": "It seems there was an error with the request. Let me try that again for you. Please wait a moment.",
+    "from_": "ResSA",
+    "kwargs": "None",
+    "prompt": "None",
+    "to": "Customer"
+  },
+  "message": "Success"
+}

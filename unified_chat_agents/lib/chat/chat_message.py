@@ -17,6 +17,13 @@ class ChatRole(Enum):
     The agent can respond or redirect to another agent.
     """
 
+    UICA = "UICA"
+    """
+    USER_INTENT_CAPTURE_AGENT
+    Will capture the user intent from the user messages.
+    The agent sends the intent to the RAGA.
+    """
+
     RAGA = "RAGA"
     """
     RETRIEVAL_AUGMENTED_GENERATION_AGENT
@@ -53,6 +60,11 @@ class ChatMessage(BaseModel):
     content: str = ""
     """
     The actual message.
+    """
+
+    kwargs: Optional[dict] = None
+    """
+    `kwargs` to be passed to the agent.
     """
 
     prompt: Optional[str] = None

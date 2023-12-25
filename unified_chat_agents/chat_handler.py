@@ -16,62 +16,28 @@ os.environ["WEAVIATE_KEY"] = secrets["WEAVIATE_KEY"]
 os.environ["WEAVIATE_URL"] = "https://unified-chat-agents-el9cpwl9.weaviate.network"
 os.environ["VECTOR_DB_BUCKET"] = "uca-vector-store"
 
+S3Utils.download_to_directory(bucket_name=os.environ.get("VECTOR_DB_BUCKET"), directory="/tmp/faiss")
+
 
 app = Flask(__name__)
 
 
 @app.route('/chat', methods=['POST'])
 def chat():
-    api_doc = """
-{
-    "description": "Get the wallet of customer",
-    "method": "GET",
-    "path": "/customer/{customer_id}/wallet",
-    "path_parameters": {
-        "customer_id": {
-            "description": "The customer ID",
-            "type": "int"
-        }
-    },
-}
-"""
-    user_message = "Hello"
-    chat_messages = [
-        ChatMessage(**{
-            "from_": ChatRole.USER,
-            "to": ChatRole.UQRA,
-            "content": user_message
-        }),
-        ChatMessage(**{
-            "from_": ChatRole.UQRA,
-            "to": ChatRole.USER,
-            "content": "Hello! How can I assist you today?"
-        }),
-        ChatMessage(**{
-            "from_": ChatRole.USER,
-            "to": ChatRole.ReqSA,
-            "content": "I want to know the wallet balance of a customer?"
-        }),
-        ChatMessage(**{
-                    "from_": ChatRole.ReqSA,
-                    "to": ChatRole.USER,
-                    "content": "Can you please provide the customer ID for whom you want to know the wallet balance?"
-                    }),
-        ChatMessage(**{
-                    "from_": ChatRole.USER,
-                    "to": ChatRole.UQRA,
-                    "content": "1234"
-                    }),
-    ]
+    data = json.loads(request.data)
+    chat_messages = [ ChatMessage(**message) for message in data.get("messages")]
     chat_room = ChatRoom("test_session_id_1", chat_messages)
-    try:
-        start_time = datetime.now()
-        chat_room.chat(api_docs=api_doc)
-        logger.info(f"Time taken: {datetime.now() - start_time}")
-        logger.info(f"Response: {chat_room.last_message}")
-        return chat_room.last_message.model_dump_json()
-    except Exception as e:
-        logger.error(f"Error: {e.message}")
+    start_time = datetime.now()
+    chat_room.chat()
+    logger.info(f"Time taken: {datetime.now() - start_time}")
+    logger.info(f"Response: {chat_room.last_message}")
+
+    response = {
+        "message": "Success",
+        "chat_messages": [json.loads(chat_message.model_dump_json()) for chat_message in chat_room.messages],
+        "last_message": json.loads(chat_room.last_message.model_dump_json())
+    }
+    return response
 
 
 @app.route('/docs', methods=['POST'])
@@ -93,14 +59,26 @@ def fetch_all_docs(collection: str):
 
 @app.route('/<collection>', methods=['DELETE'])
 def delete_class(collection: str):
-    logger.info(f"Deleting collectionq: {collection}")
+    logger.info(f"Deleting collection: {collection}")
     faiss_dao = FaissDAO.load_from_local(index_name=collection)
-    faiss_dao.delete_collection(collection=collection)
+    faiss_dao.delete_collection()
     return jsonify({'message': 'Success'})
+
+
+@app.errorhandler(Exception)
+def handle_exception(e):
+    logger.error(f"Error: {e}")
+    return {
+        "message": "Error",
+        "last_message": {
+            "from_": ChatRole.UQRA.value,
+            "to": ChatRole.USER.value,
+            "content": "Something went wrong. Please try again later.",
+            "kwargs": {}
+        }
+    }
 
 
 def handler(event, context):
     logger.info(f"Event: {LogUtils.stringify(event)}")
-    S3Utils.download_to_directory(bucket_name=os.environ.get(
-        "VECTOR_DB_BUCKET"), directory="/tmp/faiss")
     return awsgi.response(app, event, context)
