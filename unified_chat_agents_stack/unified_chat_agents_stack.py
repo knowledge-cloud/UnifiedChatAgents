@@ -23,7 +23,7 @@ class UnifiedChatAgentsStack(Stack):
             function_name="UnifiedChatAgentsAPI",
             code=_lambda.DockerImageCode.from_image_asset(directory=""),
             architecture=_lambda.Architecture.ARM_64,
-            timeout=Duration.seconds(30),
+            timeout=Duration.seconds(60),
             memory_size=1024
         )
 
@@ -52,6 +52,8 @@ class UnifiedChatAgentsStack(Stack):
             LambdaIntegration(unified_chat_agents_function)
         )
 
+
+        # Add permissions to the lambda function
         unified_chat_agents_function.add_to_role_policy(iam.PolicyStatement(
             effect=iam.Effect.ALLOW,
             actions=["dynamodb:*"],

@@ -3,6 +3,7 @@ from lib.prompt import BasePrompt
 from lib.agents import BaseRedirectingAgent
 from constants.prompts import ResSAPrompt
 from lib.chat import ChatRole, ChatMessage
+from lib.openai import OpenAIChatMessage
 
 
 class ResponseSynthesizerAgent(BaseRedirectingAgent):
@@ -20,7 +21,7 @@ class ResponseSynthesizerAgent(BaseRedirectingAgent):
 
     def predict(
         self,
-        messages: List[ChatMessage],
+        messages: List[OpenAIChatMessage],
         **kwargs
     ) -> ChatMessage:
         """Get the redirecting agent. If None, then the agent can only respond."""

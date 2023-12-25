@@ -1,7 +1,8 @@
-from typing import Dict, List
+from typing import Dict, List, Union
 from lib.chat import ChatMessage, ChatRole
 from lib.agents import BaseRedirectingAgent, UserQueryRedirectingAgent, RetrievalAugmentedGenerationAgent, RequestSynthesizerAgent, ResponseSynthesizerAgent
 from lib.prompt import ChatPromptTemplate
+from lib.openai import OpenAIChatMessage
 from utils.log_utils import logger
 
 
@@ -42,15 +43,29 @@ class ChatRoom:
 
         while True:
             last_message = self.last_message
-            messages = ChatPromptTemplate(
-                self.messages).get_format_messages(last_message.to)
+            messages = self._format_messages(self.messages, last_message.to)
+            kwargs = last_message.kwargs if last_message.kwargs else kwargs
             response = self.AGENTS[last_message.to].predict(messages, **kwargs)
             logger.debug(f"ChatRoom::chat::response: {response}")
             logger.info(
-                f"=======[{response.from_} -> {response.to}]===>>>>: {response.content if response.content else 'Redirection'}")
+                f"{response.from_} -> {response.to}: {response.content if response.content else f'Redirection with kwargs: {response.kwargs}'}")
+            logger.info("-------------------------------------")
             if response.from_ == ChatRole.USER:
                 self.last_message.to = response.to
             else:
                 self.add_message(response)
             if response.to == ChatRole.USER:
                 break
+
+        logger.info("Chat Session Ended")
+
+
+    def _format_messages(
+        self, 
+        messages: List[ChatMessage], 
+        role: ChatRole
+        ) -> Union[List[ChatMessage], List[OpenAIChatMessage]]:
+        """Format the messages to the format expected by the model."""
+        if role != ChatRole.RAGA:
+            return ChatPromptTemplate(self.messages).get_format_messages(role)
+        return messages
