@@ -7,7 +7,7 @@ from lib.chat import ChatRole, ChatMessage
 
 class RetrievalAugmentedGenerationAgent(BaseRedirectingAgent):
     """
-    The agent can respond or redirect to another agent.
+    The agent that gives performs RAG search and redirects to appropriate agent based on the search results.
     """
 
     role: ChatRole = ChatRole.RAGA
