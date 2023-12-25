@@ -22,6 +22,19 @@ app = Flask(__name__)
 
 @app.route('/chat', methods=['POST'])
 def chat():
+    api_doc = """
+{
+    "description": "Get the wallet of customer",
+    "method": "GET",
+    "path": "/customer/{customer_id}/wallet",
+    "path_parameters": {
+        "customer_id": {
+            "description": "The customer ID",
+            "type": "int"
+        }
+    },
+}
+"""
     user_message = "Hello"
     chat_messages = [
         ChatMessage(**{
@@ -36,24 +49,24 @@ def chat():
         }),
         ChatMessage(**{
             "from_": ChatRole.USER,
-            "to": ChatRole.UQRA,
-            "content": "What is the weather like today?"
+            "to": ChatRole.ReqSA,
+            "content": "I want to know the wallet balance of a customer?"
         }),
         ChatMessage(**{
-            "from_": ChatRole.ReqSA,
-            "to": ChatRole.USER,
-            "content": "Can you please provide the city name?"
-        }),
+                    "from_": ChatRole.ReqSA,
+                    "to": ChatRole.USER,
+                    "content": "Can you please provide the customer ID for whom you want to know the wallet balance?"
+                    }),
         ChatMessage(**{
-            "from_": ChatRole.USER,
-            "to": ChatRole.UQRA,
-            "content": "New York"
-        }),
+                    "from_": ChatRole.USER,
+                    "to": ChatRole.UQRA,
+                    "content": "1234"
+                    }),
     ]
     chat_room = ChatRoom("test_session_id_1", chat_messages)
     try:
         start_time = datetime.now()
-        chat_room.chat()
+        chat_room.chat(api_docs=api_doc)
         logger.info(f"Time taken: {datetime.now() - start_time}")
         logger.info(f"Response: {chat_room.last_message}")
         return chat_room.last_message.model_dump_json()

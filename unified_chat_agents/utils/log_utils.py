@@ -4,12 +4,12 @@ import logging
 
 class LogUtils:
     def __init__(self):
-        self.logger = logging.getLogger()
+        self.logger = logging.getLogger("UCA")
         self.logger.setLevel(logging.INFO)
+        # self.logger.setLevel(logging.DEBUG)
 
     def stringify(data: dict) -> str:
         return json.dumps(data,  separators=(', ', ': '))
 
 
-LogUtilsInstance = LogUtils()
-logger = LogUtilsInstance.logger
+logger = LogUtils().logger

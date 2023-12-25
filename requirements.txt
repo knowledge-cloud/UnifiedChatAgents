@@ -9,3 +9,5 @@ pydantic==2.5.2
 faiss-cpu==1.7.4
 pickles==0.1.1
 numpy==1.26.2
+httpx==0.26.0
+tiktoken==0.5.2

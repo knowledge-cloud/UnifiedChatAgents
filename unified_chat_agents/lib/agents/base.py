@@ -1,5 +1,6 @@
 from abc import ABC
 from typing import List
+import tiktoken
 
 from openai import OpenAI
 from openai.types.chat.completion_create_params import ResponseFormat
@@ -7,7 +8,7 @@ from openai.types.chat.completion_create_params import ResponseFormat
 from lib.prompt import BasePrompt
 from lib.openai import OpenAIModel
 from lib.chat import ChatMessage
-# from utils.log_utils import logger
+from utils.log_utils import logger
 
 
 class BaseAgentException(Exception):
@@ -35,6 +36,7 @@ class BaseAgent(ABC):
         self.prompt = prompt
         self.model = model
         self.client = OpenAI(api_key=kwargs.get("OPENAI_API_KEY"))
+        self.encoding = tiktoken.encoding_for_model(model.value)
 
     def chat_completions(
         self,
@@ -53,11 +55,6 @@ class BaseAgent(ABC):
         }
         messages = [system_message] + messages
 
-        # for message in messages:
-        #     logger.debug(f"{message['role']}:")
-        #     logger.debug(f"----------------")
-        #     logger.debug(f"{message['content']}")
-
         response = self.client.chat.completions.create(
             model=self.model.value,
             response_format=response_format,
@@ -65,4 +62,11 @@ class BaseAgent(ABC):
             seed=kwargs.get("seed"),
         )
 
+        logger.info(f"OpenAI::Usage:: {response.usage.model_dump_json()}")
+
         return response.choices[0].message.content
+
+    def calculate_token(self, string):
+        """Returns the number of tokens in a text string."""
+        num_tokens = len(self.encoding.encode(string))
+        return num_tokens

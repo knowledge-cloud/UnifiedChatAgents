@@ -20,7 +20,8 @@ class RetrievalAugmentedGenerationAgent(BaseRedirectingAgent):
 
     def predict(
         self,
-        messages: List[ChatMessage]
+        messages: List[ChatMessage],
+        **kwargs
     ) -> ChatMessage:
         """Get the redirecting agent."""
         response = self.chat_completions(messages, {"type": "json"})
