@@ -2,7 +2,7 @@ from abc import abstractmethod
 from typing import List
 from lib.agents import BaseAgent
 from lib.prompt import BasePrompt
-from lib.openai import OpenAIModel
+from lib.openai import OpenAIModel, OpenAIChatMessage
 from lib.chat import ChatRole, ChatMessage
 
 

@@ -9,6 +9,7 @@ You are tasked with determining whether a user's query contains all necessary pa
   "request":
     "method": string
     "url": string
+    "query_params?": string
     "body?": string
 ```
 

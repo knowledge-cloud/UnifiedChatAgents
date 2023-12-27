@@ -1,5 +1,5 @@
 from enum import Enum
-
+from lib.openai.openai_chat_message import OpenAIChatMessage, OpenaiChatRole
 
 class OpenAIModel(Enum):
     GPT_4 = "gpt-4-1106-preview"
